@@ -1,0 +1,7 @@
+{
+  "build": {
+    "watchPatterns": [
+      "/apps/api/**/*"
+    ]
+  }
+}

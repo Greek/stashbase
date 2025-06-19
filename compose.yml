@@ -1,0 +1,74 @@
+x-env_defaults: &env_defaults
+  API_URL: "http://localhost:3001"
+  DATABASE_URL: "postgresql://app:example@db:5432/app"  
+  REDIS_URL: "redis://:example@redis:6379/0"
+  BETTER_AUTH_SECRET: "abcdef"
+  CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://example.com"
+  LOG_HEADERS: "false"
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      target: dev
+      dockerfile: ./apps/api/Dockerfile
+    restart: always
+    ports:
+      - 3001:3001
+    networks:
+      - app_network
+    volumes:
+      - ./apps/api/src:/app/apps/api/src
+    environment:
+      <<: *env_defaults
+
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: example
+    volumes:
+      - .docker/db:/var/lib/postgresql/data
+    networks:
+      - app_network
+  
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - .docker/redis/data:/root/redis
+      - .docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      REDIS_PASSWORD: example
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 0
+
+  pgadmin:
+    container_name: admin
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 8000:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - .docker/pgadmin/private/var/lib/pgadmin:/var/lib/pgadmin
+      - .docker/pgadmin/:/certs/server.cert
+      - .docker/pgadmin/:/certs/server.key
+      - .docker/pgadmin/tmp:/pgadmin4/server.key
+    networks:
+      - app_network
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  app_network:
