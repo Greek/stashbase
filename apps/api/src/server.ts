@@ -10,6 +10,7 @@ import ruid from 'express-ruid';
 
 import { env } from './lib/env';
 import { requestHeadersMiddleware } from './lib/middleware/request-headers';
+import { checkForRedisConnection } from './lib/redis';
 import { initalizeTRPCRouter, t } from './lib/trpc';
 import helloWorldRouter from './modules/hello-world';
 
@@ -20,6 +21,8 @@ export const rootRouter = t.router({
 });
 
 export const createServer = (): Express => {
+  checkForRedisConnection();
+
   const app = express();
 
   // Enable CORS before all else, otherwise you'll have a bad time.
