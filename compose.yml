@@ -50,6 +50,37 @@ services:
       REDIS_PORT: 6379
       REDIS_DATABASES: 1
 
+  minio:
+    container_name: minio
+    command: server --console-address ":9001" /data
+    image: quay.io/minio/minio
+    ports:
+        - 9000:9000
+        - 9001:9001
+    environment:
+        MINIO_ROOT_USER: root
+        MINIO_ROOT_PASSWORD: password
+    healthcheck:
+        test: ["CMD", "mc", "ready", "local"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+    
+  # The following script is used to create the S3 bucket
+  # for the file uploads in the development environment.
+  # The bucket is persisted by the minio volume.
+  createS3Bucket:
+      depends_on:
+        - minio
+      entrypoint: >
+          /bin/sh -c "
+          /usr/bin/mc alias set myminio http://minio:9000 root password;
+          /usr/bin/mc mb myminio/stashbase;
+          /usr/bin/mc policy set public myminio/stashbase;
+          exit 0;
+          "
+      image: minio/mc
+
   pgadmin:
     container_name: admin
     image: dpage/pgadmin4
