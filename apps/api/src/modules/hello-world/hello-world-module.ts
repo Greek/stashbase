@@ -23,10 +23,6 @@ export class HelloWorldModule {
       freshSesh,
     });
 
-    if (!opts.ctx.session) {
-      return `Hello ${opts.input}! What's up?`;
-    }
-
-    return `Hello ${opts.input}! What's up ${opts.ctx.user?.name}?\n\nYour request ID is ${opts.ctx.req.rid}`;
+    return `Wassup`;
   }
 }

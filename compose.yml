@@ -47,9 +47,8 @@ services:
       - .docker/redis/data:/root/redis
       - .docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
-      REDIS_PASSWORD: example
       REDIS_PORT: 6379
-      REDIS_DATABASES: 0
+      REDIS_DATABASES: 1
 
   pgadmin:
     container_name: admin

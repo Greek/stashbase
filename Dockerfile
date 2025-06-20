@@ -16,4 +16,4 @@ COPY --from=build /prod/api /prod/api
 WORKDIR /prod/api
 
 EXPOSE 8001
-CMD [ "node", "-r", "esbuild-register", "./dist/index.js" ]
+CMD [ "node", "--no-warnings=ExperimentalWarning", "-r", "esbuild-register", "./dist/index.js" ]

@@ -7,12 +7,13 @@
     "clean": "rm -rf dist",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "dev": "nodemon --exec \"node -r esbuild-register ./src/index.ts\" -e .ts",
+    "dev": "nodemon --exec \"node --no-warnings=ExperimentalWarning -r esbuild-register ./src/index.ts\" -e .ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
     "start": "node -r esbuild-register ./dist/index.js",
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.832.0",
     "@t3-oss/env-core": "^0.13.4",
     "@trpc/server": "^11.1.2",
     "better-auth": "^1.2.8",

@@ -8,6 +8,10 @@ export const env = createEnv({
     API_URL: process.env.RAILWAY_PUBLIC_DOMAIN
       ? z.string().url().optional()
       : z.string().url(),
+    AWS_ACCESS_KEY_ID: z.string(),
+    AWS_SECRET_ACCESS_KEY: z.string(),
+    AWS_REGION: z.string().default('us-east-1'),
+    AWS_BUCKET_NAME: z.string(),
     DATABASE_URL: z.string().url(),
     REDIS_URL: z.string().url().optional(),
     BETTER_AUTH_SECRET: z.string(),
