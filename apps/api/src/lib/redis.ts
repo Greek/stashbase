@@ -11,6 +11,11 @@ export const redis: Redis = new Redis(env.REDIS_URL!).on('error', (err) => {
 });
 
 export async function checkForRedisConnection() {
+  // Don't check if we're in a test env.
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
+
   if (redis.status !== 'ready') {
     return;
   }

@@ -5,6 +5,7 @@ import { createServer, rootRouter } from '../server';
 describe('Basic Tests', () => {
   // Mock a minimal Express-like request object as expected by tRPC context
   const mockReq = {
+    headers: {},
     get: () => undefined,
     header: () => undefined,
     accepts: () => undefined,

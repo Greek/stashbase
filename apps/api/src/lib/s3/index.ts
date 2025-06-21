@@ -17,6 +17,11 @@ export const s3Client = new S3Client({
 });
 
 export async function checkForStashbaseBucket() {
+  // Don't check if we're in a test env.
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
+
   try {
     await s3Client.send(new HeadBucketCommand({ Bucket: env.AWS_BUCKET_NAME }));
   } catch (error) {
