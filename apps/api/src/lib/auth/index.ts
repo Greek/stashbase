@@ -1,8 +1,8 @@
+import { db } from '@api/db';
+import * as schema from '@api/db/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware } from 'better-auth/api';
-import { db } from '../../db';
-import * as schema from '../../db/schema';
 import {
   ALLOWED_ORIGINS,
   API_URL,

@@ -15,7 +15,7 @@ const config = {
     '<rootDir>/dist',
   ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@api/(.*)$': '<rootDir>/src/$1',
   },
   preset: 'ts-jest',
   testPathIgnorePatterns: ['<rootDir>/src/__tests__/setup.ts'],

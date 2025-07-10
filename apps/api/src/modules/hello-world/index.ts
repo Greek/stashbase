@@ -1,5 +1,5 @@
+import { protectedProcedure, publicProcedure } from '@api/lib/trpc';
 import { initTRPC } from '@trpc/server';
-import { protectedProcedure, publicProcedure } from '../../lib/trpc';
 import { HelloWorldModule } from './hello-world.module';
 import { ZGetNameInput } from './hello-world.types';
 

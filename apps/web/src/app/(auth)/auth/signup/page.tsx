@@ -1,10 +1,6 @@
 'use client';
 
-import { useState, ChangeEvent, FormEvent } from 'react';
-import { authClient, translateAuthErrorCode } from '@/lib/auth-client';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Button } from '@api/components/ui/button';
 import {
   Card,
   CardContent,
@@ -12,11 +8,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@api/components/ui/card';
+import { Input } from '@api/components/ui/input';
+import { Label } from '@api/components/ui/label';
+import { authClient, translateAuthErrorCode } from '@api/lib/auth-client';
+import { APP_NAME, MAX_PASSWORD_LENGTH } from '@api/lib/constants';
+import { validatePassword } from '@api/lib/passwords';
 import { Check, X } from 'lucide-react';
-import { validatePassword } from '@/lib/passwords';
-import { APP_NAME, MAX_PASSWORD_LENGTH } from '@/lib/constants';
 import Link from 'next/link';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 export default function SignupForm() {
   const [form, setForm] = useState({

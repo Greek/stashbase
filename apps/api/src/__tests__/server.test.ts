@@ -31,7 +31,7 @@ describe('Basic Tests', () => {
   });
 
   it('should return 200 OK ', async () => {
-    const res = await caller.app.helloWorld.getName('andreas');
+    const res = await caller.app.helloWorld.getName({ name: 'andreas' });
 
     expect(res).toBe("Hello andreas! What's up?");
   });

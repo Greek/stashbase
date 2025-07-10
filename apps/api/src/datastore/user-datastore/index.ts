@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { user } from '@/db/schema';
+import { db } from '@api/db';
+import { user } from '@api/db/schema';
 import { eq, or } from 'drizzle-orm';
 import { GetFullUserProfileInput } from './types';
 
