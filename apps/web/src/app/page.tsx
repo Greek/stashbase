@@ -1,7 +1,7 @@
 'use client';
-import { Button } from '@api/components/ui/button';
-import { authClient } from '@api/lib/auth-client';
-import { useTRPC } from '@api/lib/trpc';
+import { Button } from '@/components/ui/button';
+import { authClient } from '@/lib/auth-client';
+import { useTRPC } from '@/lib/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';

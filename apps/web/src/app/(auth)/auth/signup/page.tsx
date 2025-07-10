@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@api/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,12 +8,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@api/components/ui/card';
-import { Input } from '@api/components/ui/input';
-import { Label } from '@api/components/ui/label';
-import { authClient, translateAuthErrorCode } from '@api/lib/auth-client';
-import { APP_NAME, MAX_PASSWORD_LENGTH } from '@api/lib/constants';
-import { validatePassword } from '@api/lib/passwords';
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { authClient, translateAuthErrorCode } from '@/lib/auth-client';
+import { APP_NAME, MAX_PASSWORD_LENGTH } from '@/lib/constants';
+import { validatePassword } from '@/lib/passwords';
 import { Check, X } from 'lucide-react';
 import Link from 'next/link';
 import { ChangeEvent, FormEvent, useState } from 'react';

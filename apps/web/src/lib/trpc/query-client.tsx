@@ -1,16 +1,16 @@
 'use client';
 
+import { BACKEND_URL } from '@/lib/constants';
+import type { AppRouter } from '@/server';
 import {
   defaultShouldDehydrateQuery,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import superjson from 'superjson';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
+import superjson from 'superjson';
 import { TRPCProvider } from '.';
-import { BACKEND_URL } from '@/lib/constants';
-import type { AppRouter } from '@api/server';
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
