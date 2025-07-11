@@ -64,13 +64,18 @@ export const verification = pgTable('verification', {
   updatedAt: timestamp('updated_at').$defaultFn(() => new Date()),
 });
 
-export const space = pgTable('space', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull().default('My New Space'),
-  ownerId: text('owner_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-});
+export const space = pgTable(
+  'space',
+  {
+    id: text('id').primaryKey(),
+    slug: text('slug').notNull().unique(),
+    name: text('name').notNull().default('My New Space'),
+    ownerId: text('owner_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+  },
+  (table) => [index('space_slug_idx').on(table.slug)],
+);
 
 export const membership = pgTable('membership', {
   id: text('id').primaryKey(),

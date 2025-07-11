@@ -25,6 +25,12 @@ export default function LoginForm() {
       },
     }),
   );
+  const createSpaceMutation = useMutation(
+    app.spaces.createSpace.mutationOptions(),
+  );
+  const getSpaceMutation = useMutation(
+    app.spaces.getFullSpace.mutationOptions(),
+  );
 
   const performSignOut = (e: FormEvent) => {
     e.preventDefault();
@@ -70,11 +76,32 @@ export default function LoginForm() {
               <Button onClick={() => protected_getNameMutation.mutate('world')}>
                 (Protected) Get hello
               </Button>
+              <Button
+                onClick={() =>
+                  createSpaceMutation.mutate({
+                    name: 'test space',
+                    slug: 'test-space',
+                  })
+                }
+              >
+                Create Space
+              </Button>
+              <Button
+                onClick={() =>
+                  getSpaceMutation.mutate({
+                    idOrSlug: 'test-space',
+                  })
+                }
+              >
+                Get Space
+              </Button>
             </>
           )}
 
           {getNameMutation.data && <p>{getNameMutation.data}</p>}
           {getNameMutation.error && <p>{getNameMutation.error.message}</p>}
+          {getSpaceMutation.data &&
+            getSpaceMutation.data.files?.map((f) => <>{f.filename}</>)}
 
           {protected_getNameMutation.data && (
             <p>{protected_getNameMutation.data}</p>

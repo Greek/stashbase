@@ -14,10 +14,12 @@ import { checkForRedisConnection } from './lib/redis';
 import { checkForStashbaseBucket } from './lib/s3';
 import { initalizeTRPCRouter, t } from './lib/trpc';
 import helloWorldRouter from './modules/hello-world';
+import spaceRouter from './modules/spaces';
 
 export const rootRouter = t.router({
   app: t.router({
     helloWorld: helloWorldRouter,
+    spaces: spaceRouter,
   }),
 });
 
