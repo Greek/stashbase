@@ -13,9 +13,9 @@ export class SpaceModule {
       ctx: ctx,
       idOrSlug: input.idOrSlug,
       include: {
-        files: true,
         domains: true,
       },
+      ownerOnly: true,
     });
 
     if (!space) {

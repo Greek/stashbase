@@ -7,4 +7,5 @@ export type GetFullSpaceInput = {
     files?: boolean;
     domains?: boolean;
   };
+  ownerOnly?: boolean;
 };
