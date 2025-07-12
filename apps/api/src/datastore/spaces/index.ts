@@ -1,9 +1,9 @@
 import { db } from '@api/db';
 import { domain, membership, space } from '@api/db/schema';
 import { SPECIAL_CHARACTERS } from '@api/lib/constants';
+import { nanoid } from '@api/lib/nanoid';
 import { TCreateSpace } from '@api/modules/spaces/spaces.types';
 import { and, eq, or } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
 import { GetFullSpaceInput } from './types';
 
 export const SpacesDatastore = {
@@ -31,7 +31,9 @@ export const SpacesDatastore = {
     };
   },
   createSpace: async (opts: TCreateSpace & { ownerId: string }) => {
-    const slug = opts.name.replace(SPECIAL_CHARACTERS, '').replace(/\s+/g, '-');
+    const slug =
+      opts.slug ||
+      opts.name.replace(SPECIAL_CHARACTERS, '').replace(/\s+/g, '-');
     const id = nanoid();
 
     await db.insert(space).values({
