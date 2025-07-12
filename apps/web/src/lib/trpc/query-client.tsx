@@ -1,7 +1,7 @@
 'use client';
 
 import { BACKEND_URL } from '@/lib/constants';
-import type { AppRouter } from '@/server';
+import type { AppRouter } from '@api/server';
 import {
   defaultShouldDehydrateQuery,
   QueryClient,
