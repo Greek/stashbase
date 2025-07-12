@@ -3,11 +3,12 @@ import { domain, membership, space } from '@api/db/schema';
 import { SPECIAL_CHARACTERS } from '@api/lib/constants';
 import { nanoid } from '@api/lib/nanoid';
 import { TCreateSpace } from '@api/modules/spaces/spaces.types';
+import { Space } from '@api/types/space';
 import { and, eq, or } from 'drizzle-orm';
 import { GetFullSpaceInput } from './types';
 
 export const SpacesDatastore = {
-  getFullSpace: async (opts: GetFullSpaceInput) => {
+  getFullSpace: async (opts: GetFullSpaceInput): Promise<Space> => {
     let query = db
       .select()
       .from(space)
@@ -26,11 +27,17 @@ export const SpacesDatastore = {
 
     return {
       ...rows[0].space,
-      domains: rows.filter((r) => r.domain).map((r) => r.domain),
-      members: rows.filter((r) => r.membership).map((r) => r.membership),
+      domains: opts.include?.domains
+        ? rows.map((r) => r.domain).filter(Boolean)
+        : [],
+      members: opts.include?.files
+        ? rows.map((r) => r.membership).filter(Boolean)
+        : [],
     };
   },
-  createSpace: async (opts: TCreateSpace & { ownerId: string }) => {
+  createSpace: async (
+    opts: TCreateSpace & { ownerId: string },
+  ): Promise<Space> => {
     const slug =
       opts.slug ||
       opts.name.replace(SPECIAL_CHARACTERS, '').replace(/\s+/g, '-');
