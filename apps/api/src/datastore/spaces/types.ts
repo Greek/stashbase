@@ -4,7 +4,7 @@ export type GetFullSpaceInput = {
   ctx: Context;
   idOrSlug: string;
   include?: {
-    files?: boolean;
+    members?: boolean;
     domains?: boolean;
   };
   ownerOnly?: boolean;

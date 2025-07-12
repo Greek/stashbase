@@ -12,8 +12,6 @@ export const SpacesDatastore = {
     let query = db
       .select()
       .from(space)
-      .leftJoin(domain, eq(domain.spaceId, space.id))
-      .leftJoin(membership, eq(membership.spaceId, space.id))
       .where(
         and(
           or(eq(space.id, opts.idOrSlug), eq(space.slug, opts.idOrSlug)),
@@ -24,20 +22,24 @@ export const SpacesDatastore = {
       );
 
     const rows = await query.execute();
+    const domainsQuery = await db
+      .select()
+      .from(domain)
+      .where(eq(domain.spaceId, rows[0].id));
+    const membershipQuery = await db
+      .select()
+      .from(membership)
+      .where(eq(membership.spaceId, rows[0].id));
 
     return {
-      ...rows[0].space,
-      domains: opts.include?.domains
-        ? rows.map((r) => r.domain).filter(Boolean)
-        : [],
-      members: opts.include?.files
-        ? rows.map((r) => r.membership).filter(Boolean)
-        : [],
+      ...rows[0],
+      domains: opts.include?.domains ? domainsQuery : [],
+      members: opts.include?.members ? membershipQuery : [],
     };
   },
   createSpace: async (
     opts: TCreateSpace & { ownerId: string },
-  ): Promise<Space> => {
+  ): Promise<Partial<Space>> => {
     const slug =
       opts.slug ||
       opts.name.replace(SPECIAL_CHARACTERS, '').replace(/\s+/g, '-');

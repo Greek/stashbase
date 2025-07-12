@@ -19,6 +19,7 @@ export class SpaceModule {
       idOrSlug: input.idOrSlug,
       include: {
         domains: true,
+        members: true,
       },
     });
 
@@ -26,7 +27,8 @@ export class SpaceModule {
       throw NOT_FOUND_ERROR;
     }
 
-    if (!space.members.find((m) => m?.memberId === ctx.user?.id)) {
+    console.log(space);
+    if (!space.members?.find((m) => m?.memberId === ctx.user?.id)) {
       throw NOT_FOUND_ERROR;
     }
 
