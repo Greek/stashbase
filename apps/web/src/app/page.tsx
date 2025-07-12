@@ -58,24 +58,11 @@ export default function LoginForm() {
               <Button onClick={() => router.push('/auth/signup')}>
                 Sign up
               </Button>
-              <Button onClick={() => getNameMutation.mutate('world')}>
-                Get hello
-              </Button>
-              <Button onClick={() => protected_getNameMutation.mutate('world')}>
-                (Protected) Get hello
-              </Button>
             </>
           )}
 
           {session.data?.user && (
             <>
-              <Button onClick={(e) => performSignOut(e)}>Sign out</Button>
-              <Button onClick={() => getNameMutation.mutate('world')}>
-                Get hello
-              </Button>
-              <Button onClick={() => protected_getNameMutation.mutate('world')}>
-                (Protected) Get hello
-              </Button>
               <Button
                 onClick={() =>
                   createSpaceMutation.mutate({
@@ -96,18 +83,6 @@ export default function LoginForm() {
                 Get Space
               </Button>
             </>
-          )}
-
-          {getNameMutation.data && <p>{getNameMutation.data}</p>}
-          {getNameMutation.error && <p>{getNameMutation.error.message}</p>}
-          {getSpaceMutation.data &&
-            getSpaceMutation.data.files?.map((f) => <>{f.filename}</>)}
-
-          {protected_getNameMutation.data && (
-            <p>{protected_getNameMutation.data}</p>
-          )}
-          {protected_getNameMutation.error && (
-            <p>{protected_getNameMutation.error.message}</p>
           )}
         </div>
       </div>

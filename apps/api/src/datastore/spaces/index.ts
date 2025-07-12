@@ -8,18 +8,17 @@ import { GetFullSpaceInput } from './types';
 
 export const SpacesDatastore = {
   getFullSpace: async (opts: GetFullSpaceInput) => {
-    const rows = await db
-      .select({
-        space: space,
-        domain: domain,
-      })
+    let rows = db
+      .select()
       .from(space)
       .leftJoin(domain, eq(domain.spaceId, space.id))
       .where(or(eq(space.id, opts.idOrSlug), eq(space.slug, opts.idOrSlug)));
 
+    const res = await rows.execute();
+
     return {
-      ...rows[0].space,
-      domains: rows.filter((r) => r.domain).map((r) => r.domain),
+      ...res[0].space,
+      domains: res.filter((r) => r.domain).map((r) => r.domain),
     };
   },
   createSpace: async (opts: TCreateSpace & { ownerId: string }) => {
