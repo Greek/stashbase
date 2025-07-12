@@ -12,6 +12,7 @@ export const SpacesDatastore = {
       .select()
       .from(space)
       .leftJoin(domain, eq(domain.spaceId, space.id))
+      .leftJoin(membership, eq(membership.spaceId, space.id))
       .where(
         and(
           or(eq(space.id, opts.idOrSlug), eq(space.slug, opts.idOrSlug)),
@@ -26,6 +27,7 @@ export const SpacesDatastore = {
     return {
       ...rows[0].space,
       domains: rows.filter((r) => r.domain).map((r) => r.domain),
+      members: rows.filter((r) => r.membership).map((r) => r.membership),
     };
   },
   createSpace: async (opts: TCreateSpace & { ownerId: string }) => {
