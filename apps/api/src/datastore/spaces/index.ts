@@ -17,7 +17,7 @@ export const SpacesDatastore = {
         and(
           or(eq(space.id, opts.idOrSlug), eq(space.slug, opts.idOrSlug)),
           opts.ownerOnly
-            ? eq(space.ownerId, opts.ctx.user?.id ?? '')
+            ? or(eq(space.ownerId, opts.ctx.user?.id ?? ''))
             : undefined,
         ),
       );

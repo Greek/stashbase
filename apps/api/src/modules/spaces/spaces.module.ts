@@ -9,17 +9,25 @@ export class SpaceModule {
   }
 
   public async getFullSpace({ ctx, input }: GetSpaceProcedure) {
+    const NOT_FOUND_ERROR = new TRPCError({
+      message: 'Space not found',
+      code: 'NOT_FOUND',
+    });
+
     const space = await SpacesDatastore.getFullSpace({
       ctx: ctx,
       idOrSlug: input.idOrSlug,
       include: {
         domains: true,
       },
-      ownerOnly: true,
     });
 
     if (!space) {
-      throw new TRPCError({ message: 'Space not found', code: 'NOT_FOUND' });
+      throw NOT_FOUND_ERROR;
+    }
+
+    if (!space.members.find((m) => m?.memberId === ctx.user?.id)) {
+      throw NOT_FOUND_ERROR;
     }
 
     return space;
