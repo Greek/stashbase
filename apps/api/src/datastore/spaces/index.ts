@@ -31,7 +31,7 @@ export const SpacesDatastore = {
     };
   },
   createSpace: async (opts: TCreateSpace & { ownerId: string }) => {
-    const slug = opts.name.replace(SPECIAL_CHARACTERS, '').replace(' ', '-');
+    const slug = opts.name.replace(SPECIAL_CHARACTERS, '').replace(/\s+/g, '-');
     const id = nanoid();
 
     await db.insert(space).values({
