@@ -2,6 +2,7 @@ import { db } from '@api/db';
 import { domain, membership, space } from '@api/db/schema';
 import { SPECIAL_CHARACTERS } from '@api/lib/constants';
 import { nanoid } from '@api/lib/nanoid';
+import { Context } from '@api/lib/trpc';
 import { TCreateSpace } from '@api/modules/spaces/spaces.types';
 import { Space } from '@api/types/space';
 import { and, eq, or } from 'drizzle-orm';
@@ -25,21 +26,23 @@ export const SpacesDatastore = {
     const domainsQuery = await db
       .select()
       .from(domain)
-      .where(eq(domain.spaceId, rows[0].id));
+      .where(eq(domain.spaceId, rows[0]?.id ?? ''));
     const membershipQuery = await db
       .select()
       .from(membership)
-      .where(eq(membership.spaceId, rows[0].id));
+      .where(eq(membership.spaceId, rows[0]?.id ?? ''));
 
-    return {
-      ...rows[0],
-      domains: opts.include?.domains ? domainsQuery : [],
-      members: opts.include?.members ? membershipQuery : [],
-    };
+    return (
+      rows[0] && {
+        ...rows[0],
+        domains: opts.include?.domains ? domainsQuery : [],
+        members: opts.include?.members ? membershipQuery : [],
+      }
+    );
   },
   createSpace: async (
-    opts: TCreateSpace & { ownerId: string },
-  ): Promise<Partial<Space>> => {
+    opts: TCreateSpace & { ownerId: string; ctx: Context },
+  ): Promise<void> => {
     let slug = opts.slug || opts.name;
 
     slug = slug
@@ -47,7 +50,7 @@ export const SpacesDatastore = {
       .replace(SPECIAL_CHARACTERS, '')
       .replace(/\s+/g, '-');
 
-    const id = nanoid();
+    const id = nanoid(64);
     await db.insert(space).values({
       id,
       name: opts.name,
@@ -55,10 +58,6 @@ export const SpacesDatastore = {
       ownerId: opts.ownerId,
     });
 
-    const res = (
-      await db.selectDistinct().from(space).where(eq(space.id, id))
-    )[0];
-
-    return res;
+    return;
   },
 };
