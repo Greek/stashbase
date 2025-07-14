@@ -40,11 +40,14 @@ export const SpacesDatastore = {
   createSpace: async (
     opts: TCreateSpace & { ownerId: string },
   ): Promise<Partial<Space>> => {
-    const slug =
-      opts.slug ||
-      opts.name.replace(SPECIAL_CHARACTERS, '').replace(/\s+/g, '-');
-    const id = nanoid();
+    let slug = opts.slug || opts.name;
 
+    slug = slug
+      .toLowerCase()
+      .replace(SPECIAL_CHARACTERS, '')
+      .replace(/\s+/g, '-');
+
+    const id = nanoid();
     await db.insert(space).values({
       id,
       name: opts.name,
