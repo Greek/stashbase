@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 
-export default function LoginForm() {
+export default function IndexPage() {
   const router = useRouter();
   const session = authClient.useSession();
 
