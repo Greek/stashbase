@@ -1,8 +1,5 @@
-export interface CreateFileMetadataInput {
-  id: string;
-  slug: string;
-  s3Path: string;
-  filename: string;
+import { TUploadFileInput } from '@api/modules/files/files.types';
+
+export type CreateFileMetadataInput = TUploadFileInput & {
   uploaderId: string;
-  spaceId: string;
-}
+};
