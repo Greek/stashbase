@@ -44,4 +44,25 @@ export const FilesDatastore = {
 
     return created;
   },
+  deleteFile: async (input: DeleteFileInput) => {
+    const [fileRes] = await db
+      .select()
+      .from(file)
+      .where(eq(file.slug, input.slug));
+
+    const { error: s3Error } = await tryCatch(
+      s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: env.AWS_BUCKET_NAME,
+          Key: fileRes.s3Path,
+        }),
+      ),
+    );
+
+    if (s3Error) {
+      throw new Error('Failed to delete file from S3: ' + s3Error.stack);
+    }
+
+    await db.delete(file).where(eq(file.slug, input.slug));
+  },
 };
