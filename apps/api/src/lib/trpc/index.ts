@@ -3,6 +3,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import { ZodError } from 'zod';
 
 import { auth } from '../auth';
+import { logger } from '../logger';
 
 interface CreateContextOptions {
   // Empty, add your own options here.
@@ -65,5 +66,16 @@ export const initalizeTRPCRouter = (router: any) => {
   return trpcExpress.createExpressMiddleware({
     router,
     createContext,
+    onError(opts) {
+      if (
+        process.env.NODE_ENV === 'development' &&
+        opts.error.code === 'INTERNAL_SERVER_ERROR'
+      ) {
+        console.error(opts.error);
+        return;
+      }
+
+      logger.error(opts.error);
+    },
   });
 };

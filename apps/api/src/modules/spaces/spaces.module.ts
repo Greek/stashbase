@@ -1,5 +1,6 @@
 import { MembershipDatastore } from '@api/datastore/membership';
 import { SpacesDatastore } from '@api/datastore/spaces';
+import { tryCatch } from '@api/lib/try-catch';
 import { TRPCError } from '@trpc/server';
 import { CreateSpaceProcedure, GetSpaceProcedure } from './spaces.types';
 
@@ -15,18 +16,20 @@ export class SpaceModule {
       code: 'NOT_FOUND',
     });
 
-    const space = await SpacesDatastore.getFullSpace({
-      ctx: ctx,
-      idOrSlug: input.idOrSlug,
-      include: {
-        domains: true,
-        members: true,
-      },
-    });
+    const { data: space, error: getSpaceError } = await tryCatch(
+      SpacesDatastore.getFullSpace({
+        ctx: ctx,
+        idOrSlug: input.idOrSlug,
+        include: {
+          domains: true,
+          members: true,
+        },
+      }),
+    );
 
-    if (!space) {
-      throw NOT_FOUND_ERROR;
-    }
+    if (getSpaceError) throw getSpaceError;
+
+    if (!space) throw NOT_FOUND_ERROR;
 
     if (!space.members?.find((m) => m?.memberId === ctx.user?.id)) {
       throw NOT_FOUND_ERROR;
@@ -36,17 +39,20 @@ export class SpaceModule {
   }
 
   public async createSpace({ input, ctx }: CreateSpaceProcedure) {
-    const existingSpace = await SpacesDatastore.getFullSpace({
-      ctx,
-      idOrSlug: input.slug,
-    });
+    const { data: existingSpace, error: existingSpaceError } = await tryCatch(
+      SpacesDatastore.getFullSpace({
+        ctx,
+        idOrSlug: input.slug,
+      }),
+    );
 
-    if (existingSpace) {
+    if (existingSpaceError) throw existingSpaceError;
+
+    if (existingSpace)
       throw new TRPCError({
         message: 'A Space with that slug already exists.',
         code: 'BAD_REQUEST',
       });
-    }
 
     await SpacesDatastore.createSpace({
       name: input.name,
