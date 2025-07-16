@@ -55,7 +55,7 @@ export const SpacesDatastore = {
 
     slug = slug
       .toLowerCase()
-      .replace(SPECIAL_CHARACTERS, '')
+      .replace(new RegExp(SPECIAL_CHARACTERS, 'g'), '')
       .replace(/\s+/g, '-');
 
     const id = nanoid(64);
