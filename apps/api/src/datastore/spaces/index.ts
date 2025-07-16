@@ -23,22 +23,30 @@ export const SpacesDatastore = {
       );
 
     const rows = await query.execute();
-    const domainsQuery = await db
-      .select()
-      .from(domain)
-      .where(eq(domain.spaceId, rows[0]?.id ?? ''));
-    const membershipQuery = await db
-      .select()
-      .from(membership)
-      .where(eq(membership.spaceId, rows[0]?.id ?? ''));
 
-    return (
-      rows[0] && {
-        ...rows[0],
-        domains: opts.include?.domains ? domainsQuery : [],
-        members: opts.include?.members ? membershipQuery : [],
-      }
-    );
+    let final: Space = rows[0] && {
+      ...rows[0],
+    };
+
+    if (opts.include?.members) {
+      const membershipQuery = await db
+        .select()
+        .from(membership)
+        .where(eq(membership.spaceId, rows[0]?.id ?? ''));
+
+      final.members = membershipQuery;
+    }
+
+    if (opts.include?.domains) {
+      const domainsQuery = await db
+        .select()
+        .from(domain)
+        .where(eq(domain.spaceId, rows[0]?.id ?? ''));
+
+      final.domains = domainsQuery;
+    }
+
+    return final;
   },
   createSpace: async (
     opts: TCreateSpace & { ownerId: string; ctx: Context },
