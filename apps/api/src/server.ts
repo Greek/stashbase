@@ -13,6 +13,7 @@ import { requestHeadersMiddleware } from './lib/middleware/request-headers';
 import { checkForRedisConnection } from './lib/redis';
 import { checkForStashbaseBucket } from './lib/s3';
 import { initalizeTRPCRouter, t } from './lib/trpc';
+import filesRouter from './modules/files';
 import helloWorldRouter from './modules/hello-world';
 import spaceRouter from './modules/spaces';
 
@@ -20,6 +21,7 @@ export const rootRouter = t.router({
   app: t.router({
     helloWorld: helloWorldRouter,
     spaces: spaceRouter,
+    files: filesRouter,
   }),
 });
 
@@ -44,8 +46,8 @@ export const createServer = (): Express => {
   app.all('/auth/{*splat}', toNodeHandler(auth));
 
   app.disable('x-powered-by');
-  app.use(urlencoded({ extended: true }));
-  app.use(json());
+  app.use(urlencoded({ extended: true, limit: '200mb' }));
+  app.use(json({ limit: '200mb' }));
 
   app.get('/status', (req, res) => {
     res.status(200).json({ ok: true });
