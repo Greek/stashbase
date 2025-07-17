@@ -27,20 +27,44 @@ export const FilesDatastore = {
     );
 
     if (s3Error) {
-      throw new Error('Failed to upload file to S3: ' + s3Error.stack);
+      throw new TRPCError({
+        message: 'Failed to save file to S3. Safely failing',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: s3Error.stack,
+      });
     }
 
-    const [created] = await db
-      .insert(file)
-      .values({
-        id,
-        slug,
-        s3Path: key,
-        filename: input.filename,
-        uploaderId: input.uploaderId,
-        spaceId: input.spaceIdOrSlug,
-      })
-      .returning();
+    const { data, error: dbError } = await tryCatch(
+      db
+        .insert(file)
+        .values({
+          id,
+          slug,
+          s3Path: key,
+          filename: input.filename,
+          uploaderId: input.uploaderId,
+          spaceId: input.spaceIdOrSlug,
+        })
+        .returning(),
+    );
+
+    if (dbError) {
+      s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: env.AWS_BUCKET_NAME,
+          Key: key,
+        }),
+      );
+
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message:
+          'Failed to save metadata to database. Deleting file from S3 and safely failing',
+        cause: dbError.stack,
+      });
+    }
+
+    const [created] = data;
 
     return created;
   },
@@ -60,7 +84,11 @@ export const FilesDatastore = {
     );
 
     if (s3Error) {
-      throw new Error('Failed to delete file from S3: ' + s3Error.stack);
+      throw new TRPCError({
+        message: 'Failed to delete file from S3. Safely failing ',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: s3Error.stack,
+      });
     }
 
     await db.delete(file).where(eq(file.slug, input.slug));
