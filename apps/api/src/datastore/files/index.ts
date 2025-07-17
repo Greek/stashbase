@@ -5,6 +5,7 @@ import { nanoid } from '@api/lib/nanoid';
 import { s3Client } from '@api/lib/s3';
 import { tryCatch } from '@api/lib/try-catch';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { CreateFileMetadataInput, DeleteFileInput } from './types';
 
@@ -67,6 +68,9 @@ export const FilesDatastore = {
     const [created] = data;
 
     return created;
+  },
+  getFileMetadata: async (input: unknown) => {
+    // Stub
   },
   deleteFile: async (input: DeleteFileInput) => {
     const [fileRes] = await db
