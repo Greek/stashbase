@@ -11,7 +11,7 @@ export type GetSpaceProcedure = {
 export const ZCreateSpaceInput = z.object({
   name: z.string().min(2).max(32),
   // no max on slug bc of dashes
-  slug: z.string().min(2),
+  slug: z.string().min(2).optional(),
 });
 export type TCreateSpace = z.infer<typeof ZCreateSpaceInput>;
 export type CreateSpaceProcedure = {

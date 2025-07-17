@@ -66,8 +66,7 @@ export default function IndexPage() {
               <Button
                 onClick={() =>
                   createSpaceMutation.mutate({
-                    name: 'test space',
-                    slug: 'test-space',
+                    name: 'test space!!!$$$',
                   })
                 }
               >
