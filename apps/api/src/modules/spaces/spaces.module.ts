@@ -27,7 +27,12 @@ export class SpaceModule {
       }),
     );
 
-    if (getSpaceError) throw getSpaceError;
+    if (getSpaceError)
+      throw new TRPCError({
+        message: 'Something went wrong, try again later.',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: getSpaceError,
+      });
 
     if (!space) throw NOT_FOUND_ERROR;
 
@@ -39,44 +44,38 @@ export class SpaceModule {
   }
 
   public async createSpace({ input, ctx }: CreateSpaceProcedure) {
-    const { data: existingSpace, error: existingSpaceError } = await tryCatch(
-      SpacesDatastore.getFullSpace({
-        ctx,
-        idOrSlug: input.slug,
-      }),
-    );
+    if (input.slug) {
+      const { data: existingSpace, error: existingSpaceError } = await tryCatch(
+        SpacesDatastore.getFullSpace({
+          ctx,
+          idOrSlug: input.slug,
+        }),
+      );
 
-    if (existingSpaceError) throw existingSpaceError;
+      if (existingSpaceError)
+        throw new TRPCError({
+          message: 'Something went wrong, try again later.',
+          code: 'INTERNAL_SERVER_ERROR',
+          cause: existingSpaceError,
+        });
 
-    if (existingSpace)
-      throw new TRPCError({
-        message: 'A Space with that slug already exists.',
-        code: 'BAD_REQUEST',
-      });
+      if (existingSpace)
+        throw new TRPCError({
+          message: 'A Space with that slug already exists.',
+          code: 'BAD_REQUEST',
+        });
+    }
 
-    await SpacesDatastore.createSpace({
+    const space = await SpacesDatastore.createSpace({
       name: input.name,
       slug: input.slug,
       ownerId: ctx.user?.id as string,
       ctx,
     });
 
-    let space = await SpacesDatastore.getFullSpace({
-      ctx,
-      idOrSlug: input.slug,
-    });
-
     await MembershipDatastore.createMembership({
       userId: ctx.user?.id as string,
       spaceId: space.id as string,
-    });
-
-    space = await SpacesDatastore.getFullSpace({
-      ctx,
-      idOrSlug: input.slug,
-      include: {
-        members: true,
-      },
     });
 
     return space;
