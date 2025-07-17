@@ -50,8 +50,8 @@ export const SpacesDatastore = {
   },
   createSpace: async (
     opts: TCreateSpace & { ownerId: string; ctx: Context },
-  ): Promise<void> => {
-    let slug = opts.slug || opts.name;
+  ): Promise<Space> => {
+    let slug = opts.slug ? opts.slug : `${opts.name}-${nanoid(8)}`;
 
     slug = slug
       .toLowerCase()
@@ -59,13 +59,16 @@ export const SpacesDatastore = {
       .replace(/\s+/g, '-');
 
     const id = nanoid(64);
-    await db.insert(space).values({
-      id,
-      name: opts.name,
-      slug: slug,
-      ownerId: opts.ownerId,
-    });
+    const [newSpace] = await db
+      .insert(space)
+      .values({
+        id,
+        name: opts.name,
+        slug: slug,
+        ownerId: opts.ownerId,
+      })
+      .returning();
 
-    return;
+    return newSpace;
   },
 };
