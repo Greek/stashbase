@@ -5,7 +5,7 @@ import { ZCreateSpaceInput, ZGetSpaceInput } from './spaces.types';
 
 const t = initTRPC.create();
 const spaceRouter = t.router({
-  getFullSpace: publicProcedure.input(ZGetSpaceInput).mutation(async (opts) => {
+  getFullSpace: publicProcedure.input(ZGetSpaceInput).query(async (opts) => {
     return SpaceModule.build().getFullSpace(opts);
   }),
   createSpace: protectedProcedure

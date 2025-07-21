@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { useTRPC } from '@/lib/trpc';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 
@@ -28,8 +28,8 @@ export default function IndexPage() {
   const createSpaceMutation = useMutation(
     app.spaces.createSpace.mutationOptions(),
   );
-  const getSpaceMutation = useMutation(
-    app.spaces.getFullSpace.mutationOptions(),
+  const getSpaceMutation = useQuery(
+    app.spaces.getFullSpace.queryOptions({ idOrSlug: 'test-space' }),
   );
 
   const performSignOut = (e: FormEvent) => {
@@ -42,14 +42,14 @@ export default function IndexPage() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center text-center prose-xl min-h-screen">
+      <div className="prose-xl flex min-h-screen flex-col items-center justify-center text-center">
         <h2>
           {session.data?.user
             ? `Hi ${session.data.user.name}!`
-            : 'Hello user! You are not signed in.'}
+            : 'Hello user! You are not signed in.'}{' '}
         </h2>
 
-        <div className="flex flex-col gap-y-2 w-2xs">
+        <div className="flex w-2xs flex-col gap-y-2">
           <p>You can do the following:</p>
 
           {!session.data?.user && (
