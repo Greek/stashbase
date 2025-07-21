@@ -28,16 +28,16 @@ export const SpacesDatastore = {
       ...rows[0],
     };
 
-    if (opts.include?.members) {
+    if (final && opts.include?.members) {
       const membershipQuery = await db
         .select()
         .from(membership)
         .where(eq(membership.spaceId, rows[0]?.id ?? ''));
 
-      final.members = membershipQuery;
+      final.members! = membershipQuery;
     }
 
-    if (opts.include?.domains) {
+    if (final && opts.include?.domains) {
       const domainsQuery = await db
         .select()
         .from(domain)
