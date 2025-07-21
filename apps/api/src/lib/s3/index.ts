@@ -5,7 +5,7 @@ export const s3Client = new S3Client({
   endpoint:
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:9000'
-      : 'undefined',
+      : undefined,
   credentials:
     process.env.NODE_ENV === 'development'
       ? {
