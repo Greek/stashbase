@@ -5,7 +5,8 @@ import type { Space } from '@api/types/space';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai/react';
 import { atomWithStorage } from 'jotai/utils';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 // Store the space in localStorage so we don't have to call the API each time...
 const spaceAtom = atomWithStorage<Space | undefined>('currentSpace', undefined);
@@ -20,33 +21,53 @@ export const SpaceProvider = ({
   spaceSlug,
 }: React.PropsWithChildren & { spaceSlug: string }) => {
   const [spaceFromAtom, setSpaceFromAtom] = useAtom(spaceAtom);
+  const router = useRouter();
 
-  if (spaceFromAtom && spaceSlug && spaceFromAtom.slug !== spaceSlug) {
-    setSpaceFromAtom(undefined);
-  }
+  // useEffect(() => {
+  //   if (spaceFromAtom?.slug !== spaceSlug) {
+  //     setSpaceFromAtom(undefined);
+  //   }
+  // }, [spaceSlug, spaceFromAtom, setSpaceFromAtom]);
 
+  const spaceNotExist = spaceFromAtom === null || spaceFromAtom === undefined;
   const { app: api } = useTRPC();
+
+  const { data: userSpaces, isPending: isUserSpacesPending } = useQuery(
+    api.spaces.getUserSpaces.queryOptions(undefined, {
+      enabled: spaceNotExist,
+    }),
+  );
+
   const {
     data: spaceDataFromApi,
-    isPending,
+    isPending: isFullSpacePending,
     error,
   } = useQuery(
     api.spaces.getFullSpace.queryOptions(
       { idOrSlug: spaceSlug },
-      { enabled: spaceFromAtom === undefined },
+      {
+        enabled: spaceNotExist,
+        retry: 0,
+      },
     ),
   );
 
-  // if (error) {
-  //   // Default to first space we can find.
-  //   if (error.data?.code === "NOT_FOUND") {
+  useEffect(() => {
+    if (error && userSpaces && userSpaces.length > 0) {
+      const firstSpace = userSpaces[0];
+      if (firstSpace?.space) {
+        router.push(`/${firstSpace.space.slug}/overview`);
+      }
+    }
+  }, [error, userSpaces, router]);
 
-  //   }
-  // }
+  useEffect(() => {
+    if (!spaceFromAtom && spaceDataFromApi) {
+      setSpaceFromAtom(spaceDataFromApi as Space);
+    }
+  }, [spaceDataFromApi, spaceFromAtom, setSpaceFromAtom]);
 
-  if (!spaceFromAtom && spaceDataFromApi) {
-    setSpaceFromAtom(spaceDataFromApi as Space);
-  }
+  const isPending = isUserSpacesPending || isFullSpacePending;
 
   const value = React.useMemo(
     () => ({

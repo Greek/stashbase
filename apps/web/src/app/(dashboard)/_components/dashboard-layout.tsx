@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Files, Globe, Home } from 'lucide-react';
+import { Bell, Files, Globe, Home, Link } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,37 +14,43 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Space } from '@api/types/space';
+import { useSpace } from '@/hooks/use-space';
 import type { User } from 'better-auth';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import UserDropdown from './user-dropdown';
 
 export default function DashboardLayout(
   props: React.PropsWithChildren & {
     user: User;
-    space: Space;
     isLoading: boolean;
   },
 ) {
-  const { user, space, isLoading } = props;
+  const { user, isLoading } = props;
+  const { spaceSlug }: { spaceSlug: string } = useParams();
   const router = useRouter();
+  const { space } = useSpace();
 
   const navigationItems = [
     {
       title: 'Overview',
       icon: Home,
-      url: '/overview',
+      url: `/${spaceSlug}/overview`,
       isActive: true,
     },
     {
       title: 'Files',
       icon: Files,
-      url: '#',
+      url: `/${spaceSlug}/files`,
+    },
+    {
+      title: 'Links',
+      icon: Link,
+      url: `/${spaceSlug}/links`,
     },
     {
       title: 'Domains',
       icon: Globe,
-      url: '#',
+      url: `/${spaceSlug}/domains`,
     },
   ];
 
@@ -61,7 +67,7 @@ export default function DashboardLayout(
                       <Home className="size-4" />
                     </div>
                     <div className="flex flex-col gap-0.5 leading-none">
-                      <span className="font-semibold">{space.name}</span>
+                      <span className="font-semibold">{space?.name}</span>
                       <span className="text-muted-foreground text-xs">
                         v1.0.0
                       </span>

@@ -72,13 +72,7 @@ export default function IndexPage() {
               >
                 Create Space
               </Button>
-              <Button
-                onClick={() =>
-                  getSpaceMutation.mutate({
-                    idOrSlug: 'test-space',
-                  })
-                }
-              >
+              <Button onClick={() => getSpaceMutation.refetch()}>
                 Get Space
               </Button>
             </>
