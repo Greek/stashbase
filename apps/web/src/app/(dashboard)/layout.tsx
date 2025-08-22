@@ -2,7 +2,7 @@
 
 import { SpaceProvider } from '@/components/providers/space-provider';
 import { authClient } from '@/lib/auth-client';
-import { useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 import DashboardLayout from './_components/dashboard-layout';
 
 export default function Layout(props: React.PropsWithChildren) {
@@ -11,6 +11,8 @@ export default function Layout(props: React.PropsWithChildren) {
 
   const { spaceSlug }: { spaceSlug: string } = useParams();
   const isLoading = isSessionPending as boolean;
+
+  if (!isLoading && !session) redirect('/auth/login');
 
   return (
     session && (
