@@ -8,6 +8,9 @@ const spaceRouter = t.router({
   getFullSpace: publicProcedure.input(ZGetSpaceInput).query(async (opts) => {
     return SpaceModule.build().getFullSpace(opts);
   }),
+  getUserSpaces: protectedProcedure.query((opts) => {
+    return SpaceModule.build().getUserSpaces(opts);
+  }),
   createSpace: protectedProcedure
     .input(ZCreateSpaceInput)
     .mutation(async (opts) => {

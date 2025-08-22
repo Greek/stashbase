@@ -48,6 +48,15 @@ export const SpacesDatastore = {
 
     return final;
   },
+  getUserSpaces: async (userId: string) => {
+    const res = await db
+      .select()
+      .from(membership)
+      .where(eq(membership.memberId, userId))
+      .leftJoin(space, eq(space.id, membership.spaceId));
+
+    return res;
+  },
   createSpace: async (
     opts: TCreateSpace & { ownerId: string; ctx: Context },
   ): Promise<Space> => {

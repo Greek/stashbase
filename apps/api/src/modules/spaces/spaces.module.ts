@@ -1,5 +1,6 @@
 import { MembershipDatastore } from '@api/datastore/membership';
 import { SpacesDatastore } from '@api/datastore/spaces';
+import { Context } from '@api/lib/trpc';
 import { tryCatch } from '@api/lib/try-catch';
 import { TRPCError } from '@trpc/server';
 import { CreateSpaceProcedure, GetSpaceProcedure } from './spaces.types';
@@ -41,6 +42,21 @@ export class SpaceModule {
     }
 
     return space;
+  }
+
+  public async getUserSpaces({ ctx }: { ctx: Context }) {
+    const { data, error } = await tryCatch(
+      SpacesDatastore.getUserSpaces(ctx.user?.id as string),
+    );
+
+    if (error)
+      throw new TRPCError({
+        message: 'Something went wrong, try again later.',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: error,
+      });
+
+    return data;
   }
 
   public async createSpace({ input, ctx }: CreateSpaceProcedure) {
