@@ -43,6 +43,7 @@ export const FilesDatastore = {
           slug,
           s3Path: key,
           filename: input.filename,
+          mimeType: input.fileType,
           uploaderId: input.uploaderId,
           spaceId: input.spaceIdOrSlug,
         })

@@ -1,0 +1,1 @@
+ALTER TABLE "file" ADD COLUMN "mime_type" text DEFAULT '' NOT NULL;

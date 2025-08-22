@@ -99,6 +99,7 @@ export const file = pgTable(
     slug: text('slug').notNull(),
     s3Path: text('s3_path').notNull(),
     filename: text('filename').notNull(),
+    mimeType: text('mime_type').notNull().default(''),
 
     createdAt: timestamp('created_at').$defaultFn(() => new Date()),
     updatedAt: timestamp('updated_at').$defaultFn(() => new Date()),
