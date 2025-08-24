@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Files, Globe, Home, Link } from 'lucide-react';
+import { Bell, Files, Globe, Home, Link as LinkIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +16,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSpace } from '@/hooks/use-space';
 import type { User } from 'better-auth';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import UserDropdown from './user-dropdown';
 
@@ -45,7 +46,7 @@ export default function DashboardLayout(
     },
     {
       title: 'Links',
-      icon: Link,
+      icon: LinkIcon,
       url: `/${spaceSlug}/links`,
     },
     {
@@ -88,11 +89,14 @@ export default function DashboardLayout(
           <SidebarMenu>
             {navigationItems.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild isActive={item.isActive}>
-                  <a href={item.url} className="flex items-center gap-2">
+                <SidebarMenuButton
+                  asChild
+                  isActive={window.location.pathname.endsWith(item.url)}
+                >
+                  <Link href={item.url} className="flex items-center gap-2">
                     <item.icon className="size-4" />
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
