@@ -1,6 +1,7 @@
 'use client';
 
 import { SpaceProvider } from '@/components/providers/space-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { authClient } from '@/lib/auth-client';
 import { redirect, useParams } from 'next/navigation';
 import DashboardLayout from './_components/dashboard-layout';
@@ -17,11 +18,13 @@ export default function Layout(props: React.PropsWithChildren) {
   return (
     session && (
       <SpaceProvider spaceSlug={spaceSlug}>
-        <DashboardLayout
-          {...props}
-          user={session.user as NonNullable<typeof session>['user']}
-          isLoading={isLoading}
-        />
+        <SidebarProvider>
+          <DashboardLayout
+            {...props}
+            user={session.user as NonNullable<typeof session>['user']}
+            isLoading={isLoading}
+          />
+        </SidebarProvider>
       </SpaceProvider>
     )
   );

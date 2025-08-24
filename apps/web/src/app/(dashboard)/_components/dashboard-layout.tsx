@@ -11,7 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSpace } from '@/hooks/use-space';
@@ -29,6 +29,7 @@ export default function DashboardLayout(
   const { spaceSlug }: { spaceSlug: string } = useParams();
   const router = useRouter();
   const { space } = useSpace();
+  const { sidebarTitle } = useSidebar();
 
   const navigationItems = [
     {
@@ -55,7 +56,7 @@ export default function DashboardLayout(
   ];
 
   return (
-    <SidebarProvider>
+    <>
       <Sidebar>
         <SidebarHeader>
           <SidebarMenu>
@@ -76,10 +77,10 @@ export default function DashboardLayout(
                 </SidebarMenuButton>
               </SidebarMenuItem>
               {/* <SidebarMenuItem>
-                <SidebarMenuButton className="h-full" size="lg" asChild>
-                  <SidebarTrigger className="-ml-1 w-full" />
-                </SidebarMenuButton>
-              </SidebarMenuItem> */}
+      <SidebarMenuButton className="h-full" size="lg" asChild>
+        <SidebarTrigger className="-ml-1 w-full" />
+      </SidebarMenuButton>
+    </SidebarMenuItem> */}
             </span>
           </SidebarMenu>
         </SidebarHeader>
@@ -102,7 +103,7 @@ export default function DashboardLayout(
         <header className="bg-background flex h-16 shrink-0 items-center gap-2 border-b px-4">
           {/* Page Title */}
           <div className="flex flex-1 items-center gap-2">
-            <h1 className="text-lg font-semibold">Overview</h1>
+            <h1 className="text-lg font-semibold">{sidebarTitle}</h1>
           </div>
 
           {/* Right side of navbar */}
@@ -126,6 +127,6 @@ export default function DashboardLayout(
         {/* Main Content Area */}
         <div className="flex flex-1 flex-col gap-4 p-4">{props.children}</div>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

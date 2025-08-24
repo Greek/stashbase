@@ -39,6 +39,8 @@ type SidebarContextProps = {
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
+  setSidebarTitle: (newTitle: string) => void;
+  sidebarTitle: string;
   toggleSidebar: () => void;
 };
 
@@ -68,6 +70,7 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
+  const [sidebarTitle, _setSidebarTitle] = React.useState('Title');
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -86,6 +89,12 @@ function SidebarProvider({
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
     [setOpenProp, open],
+  );
+  const setSidebarTitle = React.useCallback(
+    (newTitle: string) => {
+      return _setSidebarTitle(newTitle);
+    },
+    [_setSidebarTitle],
   );
 
   // Helper to toggle the sidebar.
@@ -121,9 +130,21 @@ function SidebarProvider({
       isMobile,
       openMobile,
       setOpenMobile,
+      setSidebarTitle,
+      sidebarTitle,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [
+      sidebarTitle,
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      setSidebarTitle,
+      toggleSidebar,
+    ],
   );
 
   return (
@@ -374,7 +395,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        'flex min-h-0 flex-1 flex-col p-2 gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+        'flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-2 group-data-[collapsible=icon]:overflow-hidden',
         className,
       )}
       {...props}
