@@ -3,4 +3,6 @@ import { InferSelectModel } from 'drizzle-orm';
 
 export type File = InferSelectModel<typeof file> & {
   uploader: { id: string; name: string; image: string | null } | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
