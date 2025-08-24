@@ -36,6 +36,8 @@ export const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
+        stack:
+          process.env.NODE_ENV === 'development' ? shape.data.stack : undefined,
         validationError:
           error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
             ? error.cause.flatten()
@@ -57,6 +59,7 @@ export const protectedProcedure = t.procedure.use((opts) => {
 
   return opts.next({ ctx: opts.ctx, input: opts.input });
 });
+
 /**
  * Returns a TRPC router for express.
  * @param router TRPC router
