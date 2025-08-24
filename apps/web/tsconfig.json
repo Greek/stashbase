@@ -20,6 +20,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "postcss.config.mjs",
+    "prettier.config.js",
     "../api/src/types"
   ],
   "exclude": ["node_modules"]

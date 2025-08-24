@@ -129,7 +129,9 @@ export default function DashboardLayout(
         </header>
 
         {/* Main Content Area */}
-        <div className="flex flex-1 flex-col gap-4 p-4">{props.children}</div>
+        <main className="flex-1 p-4 xl:container xl:mx-auto">
+          {props.children}
+        </main>
       </SidebarInset>
     </>
   );
