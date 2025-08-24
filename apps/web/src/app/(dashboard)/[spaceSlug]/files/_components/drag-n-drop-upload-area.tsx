@@ -17,7 +17,13 @@ import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { InputItem } from './input-item';
 
-export default function DragNDropUploadArea({ space }: { space: string }) {
+export default function DragNDropUploadArea({
+  space,
+  refetchFiles,
+}: {
+  space: string;
+  refetchFiles: () => void;
+}) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
 
@@ -26,6 +32,7 @@ export default function DragNDropUploadArea({ space }: { space: string }) {
     api.files.uploadFile.mutationOptions({
       onSuccess: () => {
         setDialogOpen(true);
+        refetchFiles();
       },
     }),
   );
