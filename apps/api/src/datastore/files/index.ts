@@ -1,5 +1,5 @@
 import { db } from '@api/db';
-import { file } from '@api/db/schema';
+import { file, user } from '@api/db/schema';
 import { env } from '@api/lib/env';
 import { nanoid } from '@api/lib/nanoid';
 import { s3Client } from '@api/lib/s3';
@@ -69,6 +69,27 @@ export const FilesDatastore = {
     const [created] = data;
 
     return created;
+  },
+  getSpaceFiles: async (input: { spaceIdOrSlug: string }) => {
+    const files = await db
+      .select({
+        slug: file.slug,
+        s3Path: file.s3Path,
+        filename: file.filename,
+        mimeType: file.mimeType,
+        createdAt: file.createdAt,
+        updatedAt: file.updatedAt,
+        uploader: {
+          id: user.id,
+          name: user.name,
+          image: user.image,
+        },
+      })
+      .from(file)
+      .leftJoin(user, eq(file.uploaderId, user.id))
+      .where(eq(file.spaceId, input.spaceIdOrSlug));
+
+    return files;
   },
   getFileMetadata: async (input: unknown) => {
     // Stub

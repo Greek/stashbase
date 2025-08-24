@@ -2,6 +2,8 @@ import { FilesDatastore } from '@api/datastore/files';
 import { SpacesDatastore } from '@api/datastore/spaces';
 import { tryCatch } from '@api/lib/try-catch';
 import { TRPCError } from '@trpc/server';
+import { SpaceModule } from '../spaces/spaces.module';
+import { GetFilesProcedure } from './dtos/get-all-files.dto';
 import { UploadFileProcedure } from './files.types';
 
 export class FileModule {
@@ -9,6 +11,49 @@ export class FileModule {
 
   public static build() {
     return new FileModule();
+  }
+
+  public async getFiles({ input, ctx }: GetFilesProcedure) {
+    const { spaceIdOrSlug } = input;
+    const { data: space, error } = await tryCatch(
+      SpaceModule.build().getFullSpace({
+        ctx,
+        input: {
+          idOrSlug: spaceIdOrSlug,
+        },
+      }),
+    );
+
+    if (error) {
+      if (error instanceof TRPCError) {
+        if (error.code === 'BAD_REQUEST') {
+          throw error;
+        }
+      }
+
+      throw new TRPCError({
+        message: 'Oops. Something went wrong.',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: error.stack,
+      });
+    }
+
+    if (!space) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Space not found' });
+    }
+
+    const { data: files, error: getSpaceFilesError } = await tryCatch(
+      FilesDatastore.getSpaceFiles({ spaceIdOrSlug }),
+    );
+
+    if (getSpaceFilesError)
+      throw new TRPCError({
+        message: 'Could not get files, try again later.',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: getSpaceFilesError.stack,
+      });
+
+    return files;
   }
 
   public async uploadFile({ input, ctx }: UploadFileProcedure) {
