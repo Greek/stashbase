@@ -21,7 +21,7 @@ export class HelloWorldModule {
       freshSesh,
     });
 
-    return `Hey ${opts.input}.`;
+    return `Hey ${opts.input?.name}.`;
   }
 
   public async getNameFromDb(opts: GetNameProcedure) {

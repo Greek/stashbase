@@ -16,3 +16,7 @@ jest.mock('../lib/env', () => ({
 jest.mock('../lib/redis', () => ({
   checkForRedisConnection: jest.fn(),
 }));
+
+jest.mock('../lib/nanoid', () => ({
+  nanoid: (size?: number) => 'testid',
+}));
