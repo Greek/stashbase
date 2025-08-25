@@ -1,7 +1,8 @@
 import { protectedProcedure, publicProcedure } from '@api/lib/trpc';
 import { initTRPC } from '@trpc/server';
+import { ZCreateSpaceInput } from './dto/create-space.dto';
+import { ZGetSpaceInput } from './dto/get-space.dto';
 import { SpaceModule } from './spaces.module';
-import { ZCreateSpaceInput, ZGetSpaceInput } from './spaces.types';
 
 const t = initTRPC.create();
 const spaceRouter = t.router({

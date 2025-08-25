@@ -3,7 +3,8 @@ import { SpacesDatastore } from '@api/datastore/spaces';
 import { Context } from '@api/lib/trpc';
 import { tryCatch } from '@api/lib/try-catch';
 import { TRPCError } from '@trpc/server';
-import { CreateSpaceProcedure, GetSpaceProcedure } from './spaces.types';
+import { CreateSpaceProcedure } from './dto/create-space.dto';
+import { GetSpaceProcedure } from './dto/get-space.dto';
 
 export class SpaceModule {
   constructor() {}

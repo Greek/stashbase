@@ -3,7 +3,7 @@ import { domain, membership, space } from '@api/db/schema';
 import { SPECIAL_CHARACTERS } from '@api/lib/constants';
 import { nanoid } from '@api/lib/nanoid';
 import { Context } from '@api/lib/trpc';
-import { TCreateSpace } from '@api/modules/spaces/spaces.types';
+import { TCreateSpace } from '@api/modules/spaces/dto/create-space.dto';
 import { Space } from '@api/types/space';
 import { and, eq, or } from 'drizzle-orm';
 import { GetFullSpaceInput } from './types';

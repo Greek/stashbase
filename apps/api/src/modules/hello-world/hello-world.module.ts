@@ -2,7 +2,7 @@ import { UserDatastore } from '@api/datastore/user-datastore';
 import { auth } from '@api/lib/auth';
 import { logger } from '@api/lib/logger';
 import httpContext from 'express-http-context';
-import { GetNameProcedure } from './hello-world.types';
+import { GetNameProcedure } from './dto/get-name.dto';
 
 export class HelloWorldModule {
   constructor() {}

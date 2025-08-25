@@ -3,8 +3,8 @@ import { SpacesDatastore } from '@api/datastore/spaces';
 import { tryCatch } from '@api/lib/try-catch';
 import { TRPCError } from '@trpc/server';
 import { SpaceModule } from '../spaces/spaces.module';
-import { GetFilesProcedure } from './dtos/get-all-files.dto';
-import { UploadFileProcedure } from './files.types';
+import { GetFilesProcedure } from './dto/get-all-files.dto';
+import { UploadFileProcedure } from './dto/upload-file.dto';
 
 export class FileModule {
   constructor() {}

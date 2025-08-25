@@ -1,7 +1,7 @@
 import { protectedProcedure, publicProcedure } from '@api/lib/trpc';
 import { initTRPC } from '@trpc/server';
+import { ZGetNameInput } from './dto/get-name.dto';
 import { HelloWorldModule } from './hello-world.module';
-import { ZGetNameInput } from './hello-world.types';
 
 const t = initTRPC.create();
 const helloWorldRouter = t.router({
