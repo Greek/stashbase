@@ -19,11 +19,6 @@ const config = {
   },
   preset: 'ts-jest',
   testPathIgnorePatterns: ['<rootDir>/src/__tests__/setup.ts'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
-  },
 } as const satisfies Config;
 
 export default config;

@@ -12,3 +12,7 @@ jest.mock('../lib/env', () => ({
     LOG_HEADERS: false,
   },
 }));
+
+jest.mock('../lib/redis', () => ({
+  checkForRedisConnection: jest.fn(),
+}));
