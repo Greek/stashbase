@@ -9,11 +9,14 @@ import { FileEditDialog } from './file-edit-dialog';
 export default function DragNDropUploadArea({
   space,
   refetchFiles,
+  dialogOpen,
+  setDialogOpen,
 }: {
   space: string;
   refetchFiles: () => void;
+  dialogOpen: boolean;
+  setDialogOpen: (v: boolean) => void;
 }) {
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [fileBlob, setFileBlob] = useState<Blob | null>(null);
 
   const { app: api } = useTRPC();

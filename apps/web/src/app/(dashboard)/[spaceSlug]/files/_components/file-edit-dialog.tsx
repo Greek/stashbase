@@ -18,8 +18,11 @@ export const FileEditDialog = ({
   dialogOpen,
   setDialogOpen,
 }: {
-  data: File & { createdAt: string | null; updatedAt: string | null };
-  fileBlob: any;
+  data: Omit<File, 'uploaderId' | 'spaceId' | 'id'> & {
+    createdAt: string | Date | null;
+    updatedAt: string | Date | null;
+  };
+  fileBlob?: Blob | null;
   dialogOpen: boolean;
   setDialogOpen: (val: boolean) => void;
 }) => {
@@ -51,7 +54,7 @@ export const FileEditDialog = ({
             <InputItem>
               <Label htmlFor="preview">Preview</Label>
               <div className="col-span-3 flex h-24 w-full items-center justify-center rounded-md bg-gray-200">
-                {data.mimeType.startsWith('image/') ? (
+                {fileBlob && data.mimeType.startsWith('image/') ? (
                   <img
                     src={URL.createObjectURL(fileBlob as Blob)}
                     alt="File preview"

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -7,12 +8,18 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import type { File } from '@api/types/file';
+import { useState } from 'react';
+import { FileEditDialog } from './file-edit-dialog';
 
 export default function FilesList({
   files,
 }: {
   files: Omit<File, 'uploaderId' | 'spaceId' | 'id'>[];
 }) {
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<
+    Omit<File, 'uploaderId' | 'spaceId' | 'id'> | undefined
+  >();
   const formatDate = (date: string | Date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return dateObj.toLocaleDateString('en-US', {
@@ -43,9 +50,31 @@ export default function FilesList({
               {file.createdAt ? formatDate(file.createdAt) : 'Unknown'}
             </TableCell>
             <TableCell>{file.uploader?.name || 'Unknown'}</TableCell>
+            <TableCell>
+              <Button
+                onClick={() => {
+                  setSelectedFile(file);
+                  setDialogOpen(true);
+                }}
+              >
+                Edit
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
+      {selectedFile && (
+        <FileEditDialog
+          data={selectedFile as any}
+          dialogOpen={dialogOpen}
+          setDialogOpen={(open) => {
+            if (!open) {
+              setSelectedFile(undefined);
+            }
+            setDialogOpen(open);
+          }}
+        />
+      )}
     </Table>
   );
 }

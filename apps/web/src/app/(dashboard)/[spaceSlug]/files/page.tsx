@@ -5,11 +5,13 @@ import { useSidebar } from '@/components/ui/sidebar';
 import { useSpace } from '@/hooks/use-space';
 import { useTRPC } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DragNDropUploadArea from './_components/drag-n-drop-upload-area';
 import FilesList from './_components/files-list';
 
 export default function FilesPage() {
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
   const trpc = useTRPC();
   const { space, isPending } = useSpace();
   const { setSidebarTitle } = useSidebar();
@@ -40,6 +42,8 @@ export default function FilesPage() {
       <DragNDropUploadArea
         space={space ? space.slug : ''}
         refetchFiles={refetch}
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
       />
 
       {files && files.length > 0 ? (
