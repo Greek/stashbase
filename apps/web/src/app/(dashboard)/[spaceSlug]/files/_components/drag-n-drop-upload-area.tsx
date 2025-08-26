@@ -62,7 +62,6 @@ export default function DragNDropUploadArea({
         <FileEditDialog
           // TODO: omg fix
           data={uploadedFile.file as any}
-          fileBlob={fileBlob}
           dialogOpen={dialogOpen}
           setDialogOpen={setDialogOpen}
         />

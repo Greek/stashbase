@@ -9,12 +9,14 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useSpace } from '@/hooks/use-space';
+import { useTRPC } from '@/lib/trpc';
 import type { File } from '@api/types/file';
+import { useQuery } from '@tanstack/react-query';
 import { InputItem } from './input-item';
 
 export const FileEditDialog = ({
   data,
-  fileBlob,
   dialogOpen,
   setDialogOpen,
 }: {
@@ -22,10 +24,18 @@ export const FileEditDialog = ({
     createdAt: string | Date | null;
     updatedAt: string | Date | null;
   };
-  fileBlob?: Blob | null;
   dialogOpen: boolean;
   setDialogOpen: (val: boolean) => void;
 }) => {
+  const space = useSpace();
+  const trpc = useTRPC();
+  const { data: fileBlob, isLoading: isBlobLoading } = useQuery(
+    trpc.app.files.getBlob.queryOptions({
+      fileId: data.slug,
+      spaceIdOrSlug: space.space?.id as string,
+    }),
+  );
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
@@ -56,10 +66,18 @@ export const FileEditDialog = ({
               <div className="col-span-3 flex h-24 w-full items-center justify-center rounded-md bg-gray-200">
                 {fileBlob && data.mimeType.startsWith('image/') ? (
                   <img
-                    src={URL.createObjectURL(fileBlob as Blob)}
+                    src={URL.createObjectURL(
+                      fileBlob.data instanceof Blob
+                        ? fileBlob.data
+                        : new Blob([new Uint8Array(fileBlob.data)], {
+                            type: data.mimeType,
+                          }),
+                    )}
                     alt="File preview"
                     className="max-h-full max-w-full"
                   />
+                ) : isBlobLoading ? (
+                  <p>Loading...</p>
                 ) : (
                   <span className="text-gray-500">No preview available</span>
                 )}
