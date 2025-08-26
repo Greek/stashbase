@@ -6,7 +6,7 @@ import { s3Client } from '@api/lib/s3';
 import { tryCatch } from '@api/lib/try-catch';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { TRPCError } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { CreateFileMetadataInput, DeleteFileInput } from './types';
 
 export const FilesDatastore = {
@@ -91,8 +91,15 @@ export const FilesDatastore = {
 
     return files;
   },
-  getFileMetadata: async (input: unknown) => {
-    // Stub
+  getFileMetadata: async (input: { fileSlug: string; spaceId: string }) => {
+    const [res] = await db
+      .select()
+      .from(file)
+      .where(
+        and(eq(file.slug, input.fileSlug), eq(file.spaceId, input.spaceId)),
+      );
+
+    return res;
   },
   deleteFile: async (input: DeleteFileInput) => {
     const [fileRes] = await db

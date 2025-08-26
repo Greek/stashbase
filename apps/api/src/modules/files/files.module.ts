@@ -1,9 +1,13 @@
 import { FilesDatastore } from '@api/datastore/files';
 import { SpacesDatastore } from '@api/datastore/spaces';
+import { env } from '@api/lib/env';
+import { s3Client } from '@api/lib/s3';
 import { tryCatch } from '@api/lib/try-catch';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { TRPCError } from '@trpc/server';
 import { SpaceModule } from '../spaces/spaces.module';
 import { GetFilesProcedure } from './dto/get-all-files.dto';
+import { GetFileBlobProcedure } from './dto/get-file-blob.dto';
 import { UploadFileProcedure } from './dto/upload-file.dto';
 
 export class FileModule {
@@ -26,7 +30,7 @@ export class FileModule {
 
     if (error) {
       if (error instanceof TRPCError) {
-        if (error.code === 'BAD_REQUEST') {
+        if (error.code === 'NOT_FOUND' || error.code === 'BAD_REQUEST') {
           throw error;
         }
       }
@@ -36,10 +40,6 @@ export class FileModule {
         code: 'INTERNAL_SERVER_ERROR',
         cause: error.stack,
       });
-    }
-
-    if (!space) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'Space not found' });
     }
 
     const { data: files, error: getSpaceFilesError } = await tryCatch(
@@ -54,6 +54,43 @@ export class FileModule {
       });
 
     return files;
+  }
+
+  public async getFileBlob({ input, ctx }: GetFileBlobProcedure) {
+    const { fileId, spaceIdOrSlug } = input;
+
+    // using SpaceModule to get space instead of datastore to
+    // complete some extra checks
+    await SpaceModule.build().External_getFullSpace(ctx, spaceIdOrSlug);
+
+    const fileMeta = await FilesDatastore.getFileMetadata({
+      fileSlug: fileId,
+      spaceId: spaceIdOrSlug,
+    });
+
+    console.log(fileMeta);
+    const file = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: env.AWS_BUCKET_NAME,
+        Key: fileMeta.s3Path,
+      }),
+    );
+
+    console.log(file);
+
+    // Return the file as a binary Buffer
+    if (!file.Body) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'File not found in storage.',
+      });
+    }
+    // file.Body is a stream, so we need to convert it to a Buffer
+    const chunks: Buffer[] = [];
+    for await (const chunk of file.Body as any) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
   }
 
   public async uploadFile({ input, ctx }: UploadFileProcedure) {

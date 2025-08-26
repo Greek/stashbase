@@ -2,6 +2,7 @@ import { MembershipDatastore } from '@api/datastore/membership';
 import { SpacesDatastore } from '@api/datastore/spaces';
 import { Context } from '@api/lib/trpc';
 import { tryCatch } from '@api/lib/try-catch';
+import { Space } from '@api/types/space';
 import { TRPCError } from '@trpc/server';
 import { CreateSpaceProcedure } from './dto/create-space.dto';
 import { GetSpaceProcedure } from './dto/get-space.dto';
@@ -58,6 +59,35 @@ export class SpaceModule {
       });
 
     return data;
+  }
+
+  /**
+   * Handles getting a space within other modules, if you don't wanna use SpacesDatastore
+   * @param ctx {Context} Request context
+   * @param spaceIdOrSlug Space to get
+   * @returns {Space} Requested Space
+   * @throws {TRPCError}
+   */
+  public async External_getFullSpace(
+    ctx: Context,
+    spaceIdOrSlug: string,
+  ): Promise<Space> {
+    const { data: space, error } = await tryCatch(
+      SpaceModule.build().getFullSpace({
+        ctx,
+        input: {
+          idOrSlug: spaceIdOrSlug,
+        },
+      }),
+    );
+
+    if (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+    }
+
+    return space!;
   }
 
   public async createSpace({ input, ctx }: CreateSpaceProcedure) {
