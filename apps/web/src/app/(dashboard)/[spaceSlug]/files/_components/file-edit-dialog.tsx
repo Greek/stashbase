@@ -19,6 +19,7 @@ export const FileEditDialog = ({
   data,
   dialogOpen,
   setDialogOpen,
+  isEditing = false,
 }: {
   data: Omit<File, 'uploaderId' | 'spaceId' | 'id'> & {
     createdAt: string | Date | null;
@@ -26,6 +27,7 @@ export const FileEditDialog = ({
   };
   dialogOpen: boolean;
   setDialogOpen: (val: boolean) => void;
+  isEditing?: boolean;
 }) => {
   const space = useSpace();
   const trpc = useTRPC();
@@ -40,9 +42,11 @@ export const FileEditDialog = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New file</DialogTitle>
+          <DialogTitle>{isEditing ? 'Editing' : 'New'} file</DialogTitle>
           <DialogDescription>
-            You've uploaded a new file. Edit it's information here!
+            {isEditing && 'Make changes to this file here.'}
+            {!isEditing &&
+              "You've uploaded a new file. Edit it's information here!"}
           </DialogDescription>
         </DialogHeader>
         {data && (

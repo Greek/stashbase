@@ -73,6 +73,7 @@ export default function FilesList({
             }
             setDialogOpen(open);
           }}
+          isEditing
         />
       )}
     </Table>
