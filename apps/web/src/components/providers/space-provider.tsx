@@ -55,8 +55,8 @@ export const SpaceProvider = ({
   useEffect(() => {
     if (error && userSpaces && userSpaces.length > 0) {
       const firstSpace = userSpaces[0];
-      if (firstSpace?.space) {
-        router.push(`/${firstSpace.space.slug}/overview`);
+      if (firstSpace) {
+        router.push(`/${firstSpace.slug}/overview`);
       }
     }
   }, [error, userSpaces, router]);
