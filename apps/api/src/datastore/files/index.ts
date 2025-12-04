@@ -1,9 +1,11 @@
 import { db } from '@api/db';
 import { file, user } from '@api/db/schema';
+import { SLUG_ID_LENGTH } from '@api/lib/constants';
 import { env } from '@api/lib/env';
 import { nanoid } from '@api/lib/nanoid';
 import { s3Client } from '@api/lib/s3';
 import { tryCatch } from '@api/lib/try-catch';
+import { ModifyFileProcedure } from '@api/modules/files/dto/modify-file.dto';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { TRPCError } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
@@ -12,7 +14,7 @@ import { CreateFileMetadataInput, DeleteFileInput } from './types';
 export const FilesDatastore = {
   createFileMetadata: async (input: CreateFileMetadataInput) => {
     const id = nanoid(32);
-    const slug = nanoid(8);
+    const slug = nanoid(SLUG_ID_LENGTH);
     const key = `${input.spaceIdOrSlug}/${slug}/${input.filename}`;
     const buf = Buffer.from(input.blob);
 
@@ -100,6 +102,17 @@ export const FilesDatastore = {
       );
 
     return res;
+  },
+  updateFileMetadata: async ({
+    input: { changes, spaceId, fileSlug },
+  }: ModifyFileProcedure) => {
+    const [newFile] = await db
+      .update(file)
+      .set({ slug: changes.newSlug, filename: changes.newName })
+      .where(and(eq(file.spaceId, spaceId), eq(file.slug, fileSlug)))
+      .returning();
+
+    return newFile;
   },
   deleteFile: async (input: DeleteFileInput) => {
     const [fileRes] = await db

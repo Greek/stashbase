@@ -1,4 +1,5 @@
 import { FilesDatastore } from '@api/datastore/files';
+import { MembershipDatastore } from '@api/datastore/membership';
 import { SpacesDatastore } from '@api/datastore/spaces';
 import { env } from '@api/lib/env';
 import { s3Client } from '@api/lib/s3';
@@ -8,6 +9,7 @@ import { TRPCError } from '@trpc/server';
 import { SpaceModule } from '../spaces/spaces.module';
 import { GetFilesProcedure } from './dto/get-all-files.dto';
 import { GetFileBlobProcedure } from './dto/get-file-blob.dto';
+import { ModifyFileProcedure } from './dto/modify-file.dto';
 import { UploadFileProcedure } from './dto/upload-file.dto';
 
 export class FileModule {
@@ -123,5 +125,39 @@ export class FileModule {
     return {
       file: fileRecord,
     };
+  }
+
+  public async modifyFile({ input, ctx }: ModifyFileProcedure) {
+    const { fileSlug, spaceId, changes } = input;
+
+    const { data: file, error } = await tryCatch(
+      FilesDatastore.getFileMetadata({
+        fileSlug,
+        spaceId,
+      }),
+    );
+
+    if (!file)
+      throw new TRPCError({ message: 'File not found', code: 'NOT_FOUND' });
+
+    if (error) {
+      throw new TRPCError({
+        message: 'Oops. Something went wrong.',
+        code: 'INTERNAL_SERVER_ERROR',
+        cause: error,
+      });
+    }
+
+    const isMember = await MembershipDatastore.checkMembership({
+      spaceId,
+      userId: ctx.user?.id!,
+    });
+
+    if (!isMember)
+      throw new TRPCError({ message: 'File not found', code: 'NOT_FOUND' });
+
+    const updatedFile = await FilesDatastore.updateFileMetadata(input);
+
+    return updatedFile;
   }
 }

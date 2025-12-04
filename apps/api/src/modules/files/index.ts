@@ -2,6 +2,7 @@ import { protectedProcedure } from '@api/lib/trpc';
 import { initTRPC } from '@trpc/server';
 import { ZGetFilesInput } from './dto/get-all-files.dto';
 import { ZGetFileBlob } from './dto/get-file-blob.dto';
+import { ZModifyFileInput } from './dto/modify-file.dto';
 import { ZUploadFileInput } from './dto/upload-file.dto';
 import { FileModule } from './files.module';
 
@@ -17,6 +18,11 @@ const filesRouter = t.router({
     .input(ZUploadFileInput)
     .mutation(async (opts) => {
       return FileModule.build().uploadFile(opts);
+    }),
+  modifyFile: protectedProcedure
+    .input(ZModifyFileInput)
+    .mutation(async (opts) => {
+      return FileModule.build().modifyFile(opts);
     }),
 });
 
