@@ -156,7 +156,7 @@ export class FileModule {
     if (!isMember)
       throw new TRPCError({ message: 'File not found', code: 'NOT_FOUND' });
 
-    const updatedFile = await FilesDatastore.updateFileMetadata(input);
+    const updatedFile = await FilesDatastore.updateFileMetadata({ ctx, input });
 
     return updatedFile;
   }
